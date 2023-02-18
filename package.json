@@ -1,0 +1,97 @@
+{
+  "name": "C-SCRM",
+  "description": "Cyber Supply Chain Risk Management (C-SCRM) Interdependency Tool",
+  "fullname": "Cyber Supply Chain Risk Management (C-SCRM) Interdependency Tool",
+  "author": "NIST",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "version": "1.0.0",
+  "versiondate": "30 September 2019",
+  "homepage": "./",
+  "main": "public/electron.js",
+  "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@material-ui/core": "^4.12.4",
+    "@mui/icons-material": "^5.11.9",
+    "@mui/material": "^5.11.9",
+    "@nivo/core": "^0.80.0",
+    "@nivo/scatterplot": "0.80.0",
+    "@nivo/treemap": "^0.80.0",
+    "chart.js": "^4.2.1",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "clsx": "^1.2.1",
+    "csv-parse": "^5.3.5",
+    "csv-parser": "^3.0.0",
+    "electron-devtools-installer": "^3.2.0",
+    "electron-is-dev": "^2.0.0",
+    "electron-store": "^8.1.0",
+    "json2csv": "^4.5.1",
+    "plotly.js": "^2.18.2",
+    "rainbowvis.js": "^1.1.1",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-dev-utils": "^12.0.1",
+    "react-dom": "^18.2.0",
+    "react-graph-vis": "^1.0.7",
+    "react-orgchart": "^1.0.5",
+    "react-plotly.js": "^2.6.0",
+    "react-redux": "^8.0.5",
+    "react-router-dom": "^6.8.1",
+    "react-sizeme": "^3.0.2",
+    "redux": "^4.2.1",
+    "strip-bom": "^5.0.0",
+    "strip-bom-stream": "^5.0.0",
+    "survey-react": "^1.9.74",
+    "vis": "file:src/libs/visjs/vis-4.21.0-cscrm.tgz"
+  },
+  "build": {
+    "appId": "gov.nist.c-scrm",
+    "productName": "C-SCRM",
+    "directories": {
+      "buildResources": ".",
+      "output": "./dist/installers/${os}",
+      "app": "build"
+    },
+    "extends": null,
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "assets/icons/win/cscrm.ico",
+      "artifactName": "C-SCRM-Installer.exe"
+    }
+  },
+  "scripts": {
+    "dev": "react-scripts start",
+    "build": "NODE_OPTIONS=--max_old_space_size=4096 react-scripts build ; cp ./dist-package.json ./build/package.json; cp ./main.js ./build/main.js; cp ./preload.js ./build/preload.js; cp ./state-handler.js ./build/state-handler.js; cp -a ./assets/. ./build/assets/; cp -a ./installers/. ./build/installers/; NODE_OPTIONS=--max_old_space_size=4096 npm --prefix ./build install ./build",
+    "start": "concurrently \"cross-env BROWSER=none NODE_OPTIONS=--max_old_space_size=4096 react-scripts start\" \"wait-on http://localhost:3000 && electron .\"",
+    "pack-macos": "electron-packager ./build C-SCRM --out=./dist --platform=darwin --arch=x64 --overwrite --icon=assets/icons/mac/cscrm.icns",
+    "sign-macos": "electron-osx-sign --identity=\"$OSX_SIGN_IDENTITY\" dist/C-SCRM-darwin-x64/C-SCRM.app",
+    "create-installer-mac": "electron-installer-dmg ./dist/C-SCRM-darwin-x64/C-SCRM.app C-SCRM --out=dist/installers/mac/ --overwrite --icon=assets/icons/mac/cscrm.icns",
+    "create-installer-win": "build -w",
+    "pack-linux": "electron-packager ./build C-SCRM --out=./dist --platform=linux --arch=x64 --overwrite --icon=assets/icons/png/1024x1024.png",
+    "create-installer-debian": "electron-installer-debian --src dist/C-SCRM-linux-x64/ --dest dist/installers/debian/ --arch amd64 --config debian.json",
+    "create-archive-linux": "mkdir -p ./dist/archives/linux; tar -C ./dist -cvzf ./dist/archives/linux/c-scrm_1.0.0.tar.gz ./C-SCRM-linux-x64"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "devDependencies": {
+    "concurrently": "^7.6.0",
+    "cross-env": "^7.0.3",
+    "electron": "^23.1.0",
+    "electron-builder": "^23.6.0",
+    "electron-installer-debian": "^3.1.0",
+    "electron-installer-dmg": "^4.0.0",
+    "electron-packager": "^17.1.1",
+    "electron-winstaller": "^5.1.0",
+    "react-scripts": "^5.0.1",
+    "version-bump-prompt": "^6.1.0"
+  }
+}
