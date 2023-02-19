@@ -16,34 +16,34 @@ import {
   UPDATE_TYPE_RISK,
   RESET,
   UPDATE_SCORES,
-  SET_SELECTED_RESOURCE
-} from "../actions";
+  SET_SELECTED_RESOURCE,
+} from '../actions/index.js';
 
 const ASSETS = [
   {
-    ID: "PA",
-    Name: "Physical Access",
-    type: "asset",
+    ID: 'PA',
+    Name: 'Physical Access',
+    type: 'asset',
     default_responses: {
-      "1.2": 0
-    }
+      1.2: 0,
+    },
   },
   {
-    ID: "SDA",
-    Name: "Sensitive Data Access",
-    type: "asset",
+    ID: 'SDA',
+    Name: 'Sensitive Data Access',
+    type: 'asset',
     default_responses: {
-      "1.2": 0
-    }
+      1.2: 0,
+    },
   },
   {
-    ID: "ICTA",
-    Name: "ICT Access",
-    type: "asset",
+    ID: 'ICTA',
+    Name: 'ICT Access',
+    type: 'asset',
     default_responses: {
-      "1.2": 0
-    }
-  }
+      1.2: 0,
+    },
+  },
 ];
 
 const initialState = {
@@ -51,7 +51,7 @@ const initialState = {
   currentItem: null,
   importFile: null,
   importState: null,
-  navState: "home",
+  navState: 'home',
   suppliers: [],
   suppliersInactive: [],
   products: [],
@@ -71,12 +71,12 @@ const initialState = {
   projectResponses: {},
   tempResponses: {},
   preferences: {},
-  selectedResource: null
+  selectedResource: null,
 };
 
 const _ensureResponses = (resources, responses) => {
   responses = { ...responses };
-  resources.forEach(r => {
+  resources.forEach((r) => {
     if (!responses[r.ID]) {
       responses[r.ID] = {};
     }
@@ -84,29 +84,29 @@ const _ensureResponses = (resources, responses) => {
   return responses;
 };
 
-const _constructProjectHierarchy = projects => {
+const _constructProjectHierarchy = (projects) => {
   const level2project = {};
-  projects = projects.map(p => {
+  projects = projects.map((p) => {
     return { ...p, parent: null, children: [] };
   });
-  projects.forEach(p => {
+  projects.forEach((p) => {
     const level = p.Level;
     if (level) {
       level2project[level] = p;
     }
   });
-  projects.forEach(p => {
+  projects.forEach((p) => {
     const level = p.Level;
     if (level) {
       let child = level2project[p.Level];
-      let parentLvl = level.split(".");
+      let parentLvl = level.split('.');
       parentLvl.pop();
-      parentLvl = parentLvl.join(".");
+      parentLvl = parentLvl.join('.');
       if (parentLvl) {
         const parent = level2project[parentLvl];
         if (parent) {
           child.parent = parent;
-          child["Parent ID"] = parent.ID;
+          child['Parent ID'] = parent.ID;
           parent.children.push(child);
         }
       }
@@ -117,8 +117,8 @@ const _constructProjectHierarchy = projects => {
 
 function rootReducer(state = initialState, action) {
   if (action.type === ADD_SUPPLIERS) {
-    const suppliers = action.payload.filter(s => !!s._cscrm_active);
-    const suppliersInactive = action.payload.filter(s => !s._cscrm_active);
+    const suppliers = action.payload.filter((s) => !!s._cscrm_active);
+    const suppliersInactive = action.payload.filter((s) => !s._cscrm_active);
     // add empty responses for new suppliers
     const supplierResponses = _ensureResponses(
       suppliers,
@@ -127,28 +127,28 @@ function rootReducer(state = initialState, action) {
     return Object.assign({}, state, {
       suppliers,
       suppliersInactive,
-      supplierResponses
+      supplierResponses,
     });
   } else if (action.type === ADD_PRODUCTS) {
-    const products = action.payload.filter(p => !!p._cscrm_active);
-    const productsInactive = action.payload.filter(p => !p._cscrm_active);
+    const products = action.payload.filter((p) => !!p._cscrm_active);
+    const productsInactive = action.payload.filter((p) => !p._cscrm_active);
     // add empty responses for new products
     const productResponses = _ensureResponses(products, state.productResponses);
     return Object.assign({}, state, {
       products,
       productsInactive,
-      productResponses
+      productResponses,
     });
   } else if (action.type === ADD_PROJECTS) {
-    let projects = action.payload.filter(p => !!p._cscrm_active);
+    let projects = action.payload.filter((p) => !!p._cscrm_active);
     projects = _constructProjectHierarchy(projects);
-    const projectsInactive = action.payload.filter(p => !p._cscrm_active);
+    const projectsInactive = action.payload.filter((p) => !p._cscrm_active);
     // add empty responses for new projects
     const projectResponses = _ensureResponses(projects, state.projectResponses);
     return Object.assign({}, state, {
       projects,
       projectsInactive,
-      projectResponses
+      projectResponses,
     });
   } /*else if (action.type === ANSWER_QUESTION){
         let type = action.payload.type;
@@ -186,33 +186,31 @@ function rootReducer(state = initialState, action) {
                 }
             }
         }
-    } */ else if (
-    action.type === ANSWER_MULTI
-  ) {
+    } */ else if (action.type === ANSWER_MULTI) {
     let type = action.payload.type;
-    if (type === "suppliers") {
+    if (type === 'suppliers') {
       return {
         ...state,
         supplierResponses: {
           ...state.supplierResponses,
-          [action.payload.itemId]: action.payload.responses
-        }
+          [action.payload.itemId]: action.payload.responses,
+        },
       };
-    } else if (type === "products") {
+    } else if (type === 'products') {
       return {
         ...state,
         productResponses: {
           ...state.productResponses,
-          [action.payload.itemId]: action.payload.responses
-        }
+          [action.payload.itemId]: action.payload.responses,
+        },
       };
-    } else if (type === "projects") {
+    } else if (type === 'projects') {
       return {
         ...state,
         projectResponses: {
           ...state.projectResponses,
-          [action.payload.itemId]: action.payload.responses
-        }
+          [action.payload.itemId]: action.payload.responses,
+        },
       };
     }
   } else if (action.type === ANSWER_TEMP) {
@@ -220,20 +218,22 @@ function rootReducer(state = initialState, action) {
       ...state,
       tempResponses: {
         ...state.tempResponses,
-        [action.payload.qId]: action.payload.ansInd
-      }
+        [action.payload.qId]: action.payload.ansInd,
+      },
     };
   } else if (action.type === INIT_SESSION) {
-    let projects = action.payload.projects.filter(p => !!p._cscrm_active);
+    let projects = action.payload.projects.filter((p) => !!p._cscrm_active);
     projects = _constructProjectHierarchy(projects);
     const projectsInactive = action.payload.projects.filter(
-      p => !p._cscrm_active
+      (p) => !p._cscrm_active
     );
     return Object.assign({}, state, {
-      suppliers: action.payload.suppliers.filter(s => !!s._cscrm_active),
-      suppliersInactive: action.payload.suppliers.filter(s => !s._cscrm_active),
-      products: action.payload.products.filter(p => !!p._cscrm_active),
-      productsInactive: action.payload.products.filter(p => !p._cscrm_active),
+      suppliers: action.payload.suppliers.filter((s) => !!s._cscrm_active),
+      suppliersInactive: action.payload.suppliers.filter(
+        (s) => !s._cscrm_active
+      ),
+      products: action.payload.products.filter((p) => !!p._cscrm_active),
+      productsInactive: action.payload.products.filter((p) => !p._cscrm_active),
       projects,
       projectsInactive,
       supplierQuestions: (state.supplierQuestions =
@@ -247,59 +247,59 @@ function rootReducer(state = initialState, action) {
       productResponses: (state.productResponses =
         action.payload.productResponses),
       projectResponses: (state.projectResponses =
-        action.payload.projectResponses)
+        action.payload.projectResponses),
     });
   } else if (action.type === INIT_PREFERENCES) {
     return {
       ...state,
-      preferences: action.payload
+      preferences: action.payload,
     };
   } else if (action.type === UPDATE_PREFERENCES) {
     return {
       ...state,
       preferences: {
         ...state.preferences,
-        ...action.payload
-      }
+        ...action.payload,
+      },
     };
   } else if (action.type === UPDATE_CURRENT_ITEM) {
     return Object.assign({}, state, {
-      currentItem: (state.currentItem = action.payload.currentItem)
+      currentItem: (state.currentItem = action.payload.currentItem),
     });
   } else if (action.type === UPDATE_CURRENT_TYPE) {
     return Object.assign({}, state, {
-      currentType: (state.currentType = action.payload.currentType)
+      currentType: (state.currentType = action.payload.currentType),
     });
   } else if (action.type === UPDATE_IMPORT_FILE) {
     return Object.assign({}, state, {
-      importFile: (state.importFile = action.payload.importFile)
+      importFile: (state.importFile = action.payload.importFile),
     });
   } else if (action.type === UPDATE_IMPORT_STATE) {
     return Object.assign({}, state, {
-      importState: (state.importState = action.payload.importState)
+      importState: (state.importState = action.payload.importState),
     });
   } else if (action.type === UPDATE_NAV_STATE) {
     return Object.assign({}, state, {
-      navState: (state.navState = action.payload.navState)
+      navState: (state.navState = action.payload.navState),
     });
   } else if (action.type === UPDATE_TEMP_RESPONSES) {
     return Object.assign({}, state, {
-      tempResponses: (state.tempResponses = action.payload.tempResponses)
+      tempResponses: (state.tempResponses = action.payload.tempResponses),
     });
   } else if (action.type === UPDATE_TYPE_RISK) {
     let type = action.payload.type;
-    if (type === "suppliers") {
+    if (type === 'suppliers') {
       return Object.assign({}, state, {
-        suppliersRisk: action.payload.itemsRisk
+        suppliersRisk: action.payload.itemsRisk,
       });
-    } else if (type === "products") {
+    } else if (type === 'products') {
       return Object.assign({}, state, {
-        productsRisk: action.payload.itemsRisk
+        productsRisk: action.payload.itemsRisk,
       });
-    } else if (type === "projects") {
+    } else if (type === 'projects') {
       return {
         ...state,
-        projectsRisk: { ...state.projectsRisk, ...action.payload.itemsRisk }
+        projectsRisk: { ...state.projectsRisk, ...action.payload.itemsRisk },
       };
     }
   } else if (action.type === UPDATE_SCORES) {
@@ -309,12 +309,12 @@ function rootReducer(state = initialState, action) {
       ...initialState,
       supplierQuestions: state.supplierQuestions,
       productQuestions: state.productQuestions,
-      projectQuestions: state.projectQuestions
+      projectQuestions: state.projectQuestions,
     };
   } else if (action.type === SET_SELECTED_RESOURCE) {
     return {
       ...state,
-      selectedResource: action.payload
+      selectedResource: action.payload,
     };
   }
   return state;

@@ -5,7 +5,7 @@ import { Home, ItemOverview, Visualizations } from './components/';
 
 // Redux
 import { connect } from 'react-redux';
-import store from './redux/store';
+import store from './redux/store/index.js';
 import {
   updateCurrentType,
   updateCurrentItem,

@@ -1,14 +1,14 @@
-import React, { Component } from "react";
-import { ResponsiveTreeMap } from "@nivo/treemap";
+import React, { Component } from 'react';
+import { ResponsiveTreeMap } from '@nivo/treemap';
 
-import { MAX_IMPACT_SCORE } from "../../utils/risk-calculations";
-import { getColorScheme } from "../../utils/general-utils";
+import { MAX_IMPACT_SCORE } from '../../utils/risk-calculations';
+import { getColorScheme } from '../../utils/general-utils';
 
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 
-const Rainbow = require("rainbowvis.js");
+import Rainbow from 'rainbowvis.js';
 
-const mapState = state => ({
+const mapState = (state) => ({
   suppliers: state.suppliers,
   products: state.products,
   projects: state.projects,
@@ -19,17 +19,17 @@ const mapState = state => ({
   scores: state.scores,
   productQuestions: state.productQuestions,
   supplierQuestions: state.supplierQuestions,
-  preferences: state.preferences
+  preferences: state.preferences,
 });
 
 const RESOURCE_NAMES = {
-  projects: "Projects",
-  products: "Products",
-  suppliers: "Suppliers"
+  projects: 'Projects',
+  products: 'Products',
+  suppliers: 'Suppliers',
 };
 
 const theme = {
-  fontSize: 11
+  fontSize: 11,
 };
 
 class TreemapChart extends Component {
@@ -39,11 +39,11 @@ class TreemapChart extends Component {
     const colorscheme = getColorScheme(props.preferences);
     this.rainbow.setSpectrum(...colorscheme);
     this.impact_colors = [...Array(101).keys()].map(
-      i => `#${this.rainbow.colorAt(i)}`
+      (i) => `#${this.rainbow.colorAt(i)}`
     );
   }
 
-  getImpactColor = impactPct => {
+  getImpactColor = (impactPct) => {
     const colorIdx = Math.min(
       Math.floor((1 - impactPct) * this.impact_colors.length),
       this.impact_colors.length - 1
@@ -52,42 +52,42 @@ class TreemapChart extends Component {
     return impactColor;
   };
 
-  constructTree = props => {
+  constructTree = (props) => {
     const { resourceType, products, suppliers, projects, scores } = props;
     let resources;
     let resourceScores;
-    if (resourceType === "products") {
+    if (resourceType === 'products') {
       resources = products;
       resourceScores = scores.product || {};
-    } else if (resourceType === "projects") {
-      resources = projects.filter(pr => !!pr.parent);
+    } else if (resourceType === 'projects') {
+      resources = projects.filter((pr) => !!pr.parent);
       resourceScores = scores.project || {};
-    } else if (resourceType === "suppliers") {
+    } else if (resourceType === 'suppliers') {
       resources = suppliers;
       resourceScores = scores.supplier || {};
     }
-    const children = Object.values(resources || {}).map(pr => {
+    const children = Object.values(resources || {}).map((pr) => {
       return {
         id: pr.ID,
         name: pr.Name,
         impact: Math.round((resourceScores[pr.ID] || {}).impact || 0),
         interdependence: Math.round(
           (resourceScores[pr.ID] || {}).interdependence || 0
-        )
+        ),
       };
     });
     const root = {
       id: resourceType,
       name: RESOURCE_NAMES[resourceType],
-      children
+      children,
     };
 
     return root;
   };
 
-  handleResourceChange = event =>
+  handleResourceChange = (event) =>
     this.setState({
-      resource: event.target.value
+      resource: event.target.value,
     });
 
   render() {
@@ -96,7 +96,7 @@ class TreemapChart extends Component {
     const colorscheme = getColorScheme(this.props.preferences);
     this.rainbow.setSpectrum(...colorscheme);
     this.impact_colors = [...Array(101).keys()].map(
-      i => `#${this.rainbow.colorAt(i)}`
+      (i) => `#${this.rainbow.colorAt(i)}`
     );
 
     return (
@@ -109,17 +109,17 @@ class TreemapChart extends Component {
         enableLabel={this.props.labels != null ? this.props.labels : true}
         label="name"
         labelSkipSize={12}
-        colors={d =>
+        colors={(d) =>
           d.impact != null
             ? this.getImpactColor(Math.min(d.impact / MAX_IMPACT_SCORE, 1))
-            : "white"
+            : 'white'
         }
-        borderColor={{ from: "color", modifiers: [["darker", 0.3]] }}
+        borderColor={{ from: 'color', modifiers: [['darker', 0.3]] }}
         labelTextColor="black"
         animate={true}
         motionStiffness={90}
         motionDamping={11}
-        tooltip={d => {
+        tooltip={(d) => {
           return (
             <React.Fragment>
               <strong>{d.data.name || d.data.id}</strong>

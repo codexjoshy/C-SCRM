@@ -1,3 +1,3 @@
-import store from "./store";
+import store from './store/index.js';
 
 window.store = store;

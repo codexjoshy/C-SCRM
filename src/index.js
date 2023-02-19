@@ -1,20 +1,20 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { Provider } from "react-redux";
-import { BrowserRouter as Router } from "react-router-dom";
-import store from "./redux/store";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { BrowserRouter as Router } from 'react-router-dom';
+import store from './redux/store/index.js';
 import {
   addSuppliers,
   addProducts,
   addProjects,
   initSession,
   updateImportState,
-  initPreferences
-} from "./redux/actions";
+  initPreferences,
+} from './redux/actions/index.js';
 
-import "./index.css";
-import App from "./App";
-import * as serviceWorker from "./serviceWorker";
+import './index.css';
+import App from './App.js';
+import * as serviceWorker from './serviceWorker.js';
 
 // This only works when running electron or as an app (i.e. will not work in browser).
 const electron = window.electron;
@@ -22,39 +22,39 @@ const ipcRenderer = electron.ipcRenderer;
 
 // Handle response from the electron main thread/server.
 
-ipcRenderer.on("init-state", (event, arg) => {
-  console.log("init state: ", arg);
+ipcRenderer.on('init-state', (event, arg) => {
+  console.log('init state: ', arg);
   store.dispatch(initSession(arg));
 });
 
-ipcRenderer.on("init-preferences", (event, arg) => {
-  console.log("init preferences: ", arg);
+ipcRenderer.on('init-preferences', (event, arg) => {
+  console.log('init preferences: ', arg);
   store.dispatch(initPreferences(arg));
 });
 
-ipcRenderer.on("save-confirm", (event, arg) => {
-  console.log("Save confirmed: ", arg);
+ipcRenderer.on('save-confirm', (event, arg) => {
+  console.log('Save confirmed: ', arg);
 });
 
-ipcRenderer.on("save-error", (event, arg) => {
-  console.log("!!!Save error: ", arg);
+ipcRenderer.on('save-error', (event, arg) => {
+  console.log('!!!Save error: ', arg);
 });
 
-ipcRenderer.on("app-loc", (event, arg) => {
-  console.log("app location: ", arg);
+ipcRenderer.on('app-loc', (event, arg) => {
+  console.log('app location: ', arg);
 });
 
 // Asynchronous file response: what to do after the main has loaded a file at the request of the renderer.
 // params: event - typical event, arg - object structured like the following: {data: null or array representing rows of csv,
 //                                                                            error: null or string,
 //                                                                            type: null or string describing content type}
-ipcRenderer.on("asynchronous-file-response", (event, arg) => {
+ipcRenderer.on('asynchronous-file-response', (event, arg) => {
   if (!arg.error) {
-    if (arg.type === "projects") {
+    if (arg.type === 'projects') {
       store.dispatch(addProjects(arg.data));
-    } else if (arg.type === "suppliers") {
+    } else if (arg.type === 'suppliers') {
       store.dispatch(addSuppliers(arg.data));
-    } else if (arg.type === "products") {
+    } else if (arg.type === 'products') {
       store.dispatch(addProducts(arg.data));
     }
 
@@ -79,7 +79,7 @@ ReactDOM.render(
       <App />
     </Router>
   </Provider>,
-  document.getElementById("root")
+  document.getElementById('root')
 );
 
 // If you want your app to work offline and load faster, you can change
